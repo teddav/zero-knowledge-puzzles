@@ -19,6 +19,9 @@ describe("Equality Test ", function (){
         let witness ; 
         // 2 == 2 && 2 == 2 
         const expectedOutput = 1;
+
+        // I re-wrote IsZero, just making sure I have the right number of constraints
+        assert(circuit.constraints.length === 5);
         
         witness = await circuit.calculateWitness({"a":[2,2,2]},true);
         assert(Fr.eq(Fr.e(witness[0]), Fr.e(1)));
