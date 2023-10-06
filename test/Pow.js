@@ -19,6 +19,8 @@ describe("Power Modulo Test ", function (){
         let witness ; 
         // 2**4 = 16
         const expectedOutput =16;
+
+        console.log("constraints: ", circuit.constraints.length);
         
         witness = await circuit.calculateWitness({"a":[2,4]},true);
         assert(Fr.eq(Fr.e(witness[0]), Fr.e(1)));
