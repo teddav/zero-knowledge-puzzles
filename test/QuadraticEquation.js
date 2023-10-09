@@ -22,6 +22,8 @@ describe("Quadratic Equations Test ", function () {
     await circuit.loadConstraints();
     let witness;
 
+    console.log("constraints: ", circuit.constraints.length);
+
     const expectedOutput = 1;
 
     witness = await circuit.calculateWitness(
