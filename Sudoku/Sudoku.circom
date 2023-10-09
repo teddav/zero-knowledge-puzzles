@@ -2,6 +2,12 @@ pragma circom 2.1.4;
 
 include "../node_modules/circomlib/circuits/comparators.circom";
 
+//include "../NotEqual/NotEqual.circom";
+template NotEqual() {
+    signal input a[2];
+    signal tmp <== IsZero()(a[0] - a[1]);
+    signal output c <== -1 * tmp + 1;
+}
 
 /*
     Given a 4x4 sudoku board with array signal input "question" and "solution", check if the solution is correct.
@@ -73,11 +79,44 @@ template Sudoku () {
     3 === row4[3].out + row4[2].out + row4[1].out + row4[0].out; 
 
     // Write your solution from here.. Good Luck!
-    
-    
-   
+    var LENGTH = 4;
+
+    signal valid_rows[LENGTH];
+    signal valid_cols[LENGTH];
+    for (var i = 0; i < LENGTH; i++) {
+        var array_index = i * LENGTH;
+        var row[LENGTH] = [solution[array_index + 0], solution[array_index + 1], solution[array_index + 2], solution[array_index + 3]];
+        var column[LENGTH] = [solution[i], solution[i + LENGTH], solution[i + LENGTH * 2], solution[i + LENGTH * 3]];
+        valid_rows[i] <== UniqueDigits(LENGTH)(row);
+        valid_cols[i] <== UniqueDigits(LENGTH)(column);
+    }
+
+    var valid_rows_and_cols = 0;
+    for (var i = 0; i < LENGTH; i++) {
+        valid_rows_and_cols += valid_rows[i];
+        valid_rows_and_cols += valid_cols[i];
+    }
+
+    out <== IsEqual()([valid_rows_and_cols, 8]);
 }
 
+template UniqueDigits(LENGTH) {
+    signal input in[LENGTH];
+    signal unique[LENGTH][LENGTH];
+
+    var total = 0;
+
+    for (var i = 0; i < LENGTH; i++) {
+        for (var j = 0; j < LENGTH; j++) {
+            if (i != j) {
+                unique[i][j] <== NotEqual()([in[i], in[j]]);
+                total += unique[i][j];
+            }
+        }
+    }
+    var expected_total = LENGTH * LENGTH - LENGTH;
+    signal output out <== IsEqual()([total, expected_total]);
+}
 
 component main = Sudoku();
 
